@@ -5,16 +5,18 @@ class pages extends base
 {
     var $tableName = 'pages';
     var $keyField = 'pages_id';
-    var $searchableFields = array('pages_meta', 'pages_title', 'pages_url_key');
+    var $searchableFields = array('pages_meta', 'pages_title', 'pages_url_key', 'pages_h1');
 
     function loadByURLKey($url_key)
     {
         $holdingKeyField = $this->keyField;
 
         $this->keyField = 'pages_url_key';
-        $this->load($url_key);
+        $loadSuccess = $this->load($url_key);
 
         $this->keyField = $holdingKeyField;
+
+        return $loadSuccess;
     }
 
     function sanitize($sanitizeData) 
@@ -91,6 +93,34 @@ class pages extends base
 
         
         return $success;
+    }
+
+    function getList($search = null)
+    {
+        $loadQuery = "SELECT * FROM " . $this->tableName;
+        $parameterList = array();
+        if ( !is_null($search) && !empty($search))
+        {
+            $loadQuery .= " WHERE ";
+
+            $loopCount = 0;
+            foreach ($this->searchableFields as $value)
+            {
+                $loadQuery .= ($loopCount++ > 0 ? " OR " : "") . "$value LIKE ?";
+                $parameterList[] = '%' . $search . '%';
+            }
+            
+        }
+        $loadQuery .= " ORDER BY pages_menu_order ASC ";
+        $stmt = $this->db->prepare($loadQuery);
+        $stmt->execute($parameterList);
+
+        if ($stmt->rowCount() < 1)
+        {
+            $this->errors[] = 'No records to display';       
+        }
+        
+        return $stmt;
     }
 }
 ?>

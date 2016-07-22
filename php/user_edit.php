@@ -5,6 +5,14 @@ require_once('../inc/user.class.php');
 $user = new user();
 $user->checkLogin();
 
+if($_SESSION['user_permission_id'] != "fb694fee-e4a4-11e5-9e77-7a8325307fec")
+{
+    // only Admin users have access to this page
+    header("location:admin.php?r=users");
+    exit;
+}
+
+
 if (isset($_GET['user_id']))
 {
     $user->load($_GET['user_id']);
@@ -30,11 +38,11 @@ if (isset($_POST['btnSubmit']))
         unset($user->data['user_image_tmpname']);
         
         //$user->data['user_password'] = password_hash($user->data['user_password'], PASSWORD_DEFAULT);
-        $user->data['user_password'] = hash("md5", $user->data['user_password']);
+        $user->data['user_password'] = hash("md5", $user->data['user_password']);// TODO: Use an actually secure password hash routine
         if ($user->save()) 
         {
 
-            header("location:saved.php?return=user");
+            header("location:admin.php?r=saved&return=users");
             exit;
         }
         
@@ -44,5 +52,4 @@ if (isset($_POST['btnSubmit']))
 $dataValues = $user->data;
 $permissions = $user->getAllPermissions();
 
-include_once("../tpl/user_edit.tpl.php");
 ?>

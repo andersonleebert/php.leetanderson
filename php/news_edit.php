@@ -4,11 +4,11 @@ require_once('../inc/newsArticle.class.php');
 
 $newsArticle = new newsArticle();
 $newsArticle->checkLogin();
-if (isset($_GET['article_id']) && $_GET['article_id'] >0)
+if (isset($_GET['article_id']))
 {
     $newsArticle->load($_GET['article_id']);
 } 
-elseif (isset($_POST['article_id']) && $_POST['article_id'] >0) 
+elseif (isset($_POST['article_id'])) 
 {
     $newsArticle->load($_POST['article_id']);
 }
@@ -21,13 +21,14 @@ if (isset($_POST['btnSubmit']))
     {
         if ($newsArticle->save()) 
         {
-            header("location:saved.php?return=news");
+            header("location:admin.php?r=saved&return=news");
             exit;
         }
     }
 }
 
+$dateTimeNow = new DateTime();
+$dateTimeNow = $dateTimeNow->format("Y-m-d H:i:s");
 $dataValues = $newsArticle->data;
 
-include_once("../tpl/news_edit.tpl.php");
 ?>

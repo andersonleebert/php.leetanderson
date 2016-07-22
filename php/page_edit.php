@@ -30,7 +30,7 @@ if (isset($_POST['btnSubmit']))
 
         if ($pages->save()) 
         {
-            header("location:saved.php?return=page");
+            header("location:admin.php?r=saved&return=pages");
             exit;
         }
     }
@@ -38,5 +38,4 @@ if (isset($_POST['btnSubmit']))
 
 $dataValues = $pages->data;
 
-include_once("../tpl/page_edit.tpl.php");
 ?>

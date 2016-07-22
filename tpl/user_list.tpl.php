@@ -1,15 +1,10 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>User list</title>
-</head>
-<body>
 <h1>Users</h1>
-<form method="get" action="user_list.php">
-    <input type="text" name="search" />
+<form method="get" action="admin.php">
+    <input type="hidden" name="r" value="users" />
+    <input type="text" name="search" value="<?php echo (isset($_GET['search']) ? $_GET['search'] : ""); ?>" />
     <input type="submit" name="btnSubmit" value="Search" />
 </form>
-<table>
+<table class="adminList">
     <thead>
         <tr>
             <?php
@@ -20,9 +15,16 @@
             <?php
                 }
             ?>
-            <th>Edit</th>
-            <th>View</th>
-            <th>Delete</th>
+            <?php
+                if ($isAdminUser)
+                {
+            ?>
+                    <th>Edit</th>
+                    <th>Delete</th>
+            <?php
+                }
+            ?>
+            
         </tr>
     </thead>
     <?php
@@ -34,26 +36,42 @@
                     foreach ($columnsToDisplay as $key => $value)
                     {
                 ?>
-                        <td><?php echo $row[$key]; ?></td>
+                        <td>
+                            <?php
+                                if ($key == $permissionColumn) {
+                                    echo ($row[$key] == "fb694fee-e4a4-11e5-9e77-7a8325307fec" ? "Administrator" : "Guest" );
+                                }
+                                else
+                                {
+                                    echo $row[$key];
+                                }
+                            ?>
+                        </td>
                 <?php
                     }
                 ?>
-                <td><a href="user_edit.php?user_id=<?php echo $row['user_id']; ?>">Edit</a></td>
-                <td><a href="user_view.php?user_id=<?php echo $row['user_id']; ?>">View</a></td>
-                <td><a href="user_list.php?user_id=<?php echo $row['user_id']; ?>&action=delete">Delete</a></td>
+                <?php
+                    if ($isAdminUser)
+                    {
+                ?>
+                        <td><a href="admin.php?r=user_edit&user_id=<?php echo $row['user_id']; ?>">Edit</a></td>
+                        <td><a href="user_list.php?user_id=<?php echo $row['user_id']; ?>&action=delete">Delete</a></td>
+                <?php
+                    }
+                ?>
             </tr>
     <?php
         }
-
     ?>
 </table>
+<?php
+    if ($isAdminUser)
+    {
+?>
+        <div>
+            <h3><a href="admin.php?r=user_edit">Create New User</a></h3>
+        </div>
+<?php
+    }
+?>
 
-<div>
-    <h3><a href="user_edit.php">Create New User</h3>
-    <?php if($isAdminUser){ ?><h3><a href="user_report.php">User report</h3><?php } ?>
-</div>
-<div>
-    <h3><a href="user_logout.php">Logout</h3>
-</div>
-</body>
-</html>

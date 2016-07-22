@@ -5,11 +5,12 @@
 </head>
 <body>
 <h1>Pages</h1>
-<form method="get" action="page_list.php">
-    <input type="text" name="search" />
+<form method="get" action="admin.php">
+    <input type="hidden" name="r" value="pages" />
+    <input type="text" name="search" value="<?php echo (isset($_GET['search']) ? $_GET['search'] : ""); ?>" />
     <input type="submit" name="btnSubmit" value="Search" />
 </form>
-<table>
+<table class="adminList">
     <thead>
         <tr>
             <?php
@@ -21,7 +22,6 @@
                 }
             ?>
             <th>Edit</th>
-            <th>View</th>
             <th>Delete</th>
         </tr>
     </thead>
@@ -38,8 +38,7 @@
                 <?php
                     }
                 ?>
-                <td><a href="page_edit.php?page=<?php echo $row['pages_url_key']; ?>">Edit</a></td>
-                <td><a href="page_view.php?page=<?php echo $row['pages_url_key']; ?>">View</a></td>
+                <td><a href="admin.php?r=page_edit&page=<?php echo $row['pages_url_key']; ?>">Edit</a></td>
                 <td><a href="page_list.php?page=<?php echo $row['pages_id']; ?>&action=delete">Delete</a></td>
             </tr>
     <?php
@@ -49,10 +48,7 @@
 </table>
 
 <div>
-    <h3><a href="page_edit.php">Create New Page</a></h3>
-</div>
-<div>
-    <h3><a href="user_logout.php">Logout</h3>
+    <h3><a href="admin.php?r=page_edit">Create New Page</a></h3>
 </div>
 </body>
 </html>

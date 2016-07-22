@@ -68,7 +68,7 @@ class base extends settings
         
         return $success;
     }
-    
+
     function save()
     {
         $success = true;
@@ -168,7 +168,7 @@ class base extends settings
     public function moveUpload($tmpfilename, $destination, $filename)
     {
         move_uploaded_file($tmpfilename, $destination . $filename);
-        return dirname($_SERVER["PHP_SELF"]) . "/" . $destination . $filename;
+        return ( dirname($_SERVER["PHP_SELF"]) == "/" ? "" : dirname($_SERVER["PHP_SELF"]) ) . "/" . $destination . $filename;
     }
 
     public function guidv4() 
@@ -192,9 +192,9 @@ class base extends settings
 
     function checkLogin()
     {
-        if( !$_SESSION['loggedIn'])
+        if(!isset($_SESSION['loggedIn']) OR !$_SESSION['loggedIn'])
         {
-            header("location:user_login.php");
+            header("location:admin.php?r=login");
             exit;
         }
     }

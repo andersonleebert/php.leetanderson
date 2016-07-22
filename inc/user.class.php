@@ -36,9 +36,9 @@ class user extends base
         }
         else
         {
-            if( strlen($validateData['user_password']) > 12 )
+            if( strlen($validateData['user_password']) > 20 )
             {
-                $this->errors[] = 'Too long of a password';
+                $this->errors[] = 'Your password must be less than 21 characters';
                 $success = false;
             }
         }

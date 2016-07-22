@@ -9,18 +9,25 @@ if (isset( $_GET['action']) && $_GET['action'] == 'delete' && isset($_GET['user_
 {
     if ($user->deleteRecord($_GET['user_id']))
     {
-        header("location:saved.php?return=user");
+        header("location:admin.php?r=saved&return=users");
         exit;
     }
 }
 
-$userData = $user->loadAllUsers($_GET['search'] || '');
+if ( !isset($_GET['search']) )
+{
+    $_GET['search'] = "";
+}
+else
+{
+    $_GET['search'] = filter_var($_GET['search'], FILTER_SANITIZE_STRING);
+}
 
+$userData = $user->loadAllUsers($_GET['search']);
+$permissionColumn = "user_permission_id";
 $columnsToDisplay = 
 array(
     "user_username" => "Username",
-    "user_password" => "Password",
-    "user_id" => "ID",
     "user_permission_id" => "Permission"
 );
 
@@ -33,8 +40,5 @@ else
 {
     $isAdminUser = false;
 }
-
-include_once("../tpl/user_list.tpl.php");
-
 
 ?>

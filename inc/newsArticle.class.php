@@ -6,7 +6,13 @@ class newsArticle extends base
     var $tableName = 'news_articles';
     var $keyField = 'article_id';
     var $searchableFields = array('article_content', 'article_title', 'article_author');
-    var $reportResultsPerPage = 1;  
+    var $reportResultsPerPage = 1; 
+
+    function __construct($resultsPerPage = 1) 
+    {
+        $this->connectToDB();
+        $this->reportResultsPerPage = $resultsPerPage;
+    }
 
     function exportData($filename) 
     {
@@ -72,11 +78,9 @@ class newsArticle extends base
         {
             $filterPassed = false;
             
-            $listSQL .= " WHERE ";
-            
             if (isset($reportFilters['article_author_filter']) && !empty($reportFilters['article_author_filter'])) 
             {
-                $listSQL .= "article_author LIKE ?";                                
+                $listSQL .= " WHERE article_author LIKE ?";                               
                 $parameterList[] = '%' . $reportFilters['article_author_filter'] . '%';
                 $filterPassed = true;
             }            
@@ -86,17 +90,20 @@ class newsArticle extends base
                 (isset($reportFilters['article_end_date_filter']) && !empty($reportFilters['article_end_date_filter'])) 
             )
             {
-                $listSQL .= ($filterPassed ? " AND " : "") . 
+                $listSQL .= ($filterPassed ? " AND " : " WHERE ") . 
                     "article_date BETWEEN ? AND ?";                                
                 $parameterList[] = $reportFilters['article_start_date_filter'];
                 $parameterList[] = $reportFilters['article_end_date_filter'];
                 $filterPassed = true;
-            }            
-            
+            }         
+
+            $listSQL .= " ORDER BY article_date DESC";
+        
             if (isset($reportFilters['page']) && !empty($reportFilters['page'])) 
             {
                 $listSQL .= " LIMIT " . ($this->reportResultsPerPage * ($reportFilters['page'] - 1)) . "," . $this->reportResultsPerPage;
-            }            
+                $filterPassed = true;
+            }
             
             if ($filterPassed)
             {
@@ -231,6 +238,8 @@ class newsArticle extends base
             $parameterList[] = '%' . $search . '%';
             $parameterList[] = '%' . $search . '%';
         }
+        $loadQuery .= " ORDER BY article_date DESC";
+
         $stmt = $this->db->prepare($loadQuery);
         $stmt->execute($parameterList);
 
